@@ -5,6 +5,7 @@ add_executable(bill
     main.cpp
     about.cpp
     app.cpp
+    journalmodel.cpp
     resources.qrc)
 
 target_link_libraries(bill
@@ -13,6 +14,7 @@ target_link_libraries(bill
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickControls2
+    Qt5::Sql
     Qt5::Svg
     KF5::I18n
     KF5::CoreAddons

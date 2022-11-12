@@ -10,6 +10,7 @@
 
 #include "about.h"
 #include "app.h"
+#include "journalmodel.h"
 #include "version-bill.h"
 #include <KAboutData>
 #include <KLocalizedContext>
@@ -28,19 +29,19 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
                          // The program name used internally.
                          QStringLiteral("bill"),
                          // A displayable program name string.
-                         i18nc("@title", "bill"),
+                         i18nc("@title", "Bullet Bill"),
                          // The program version string.
                          QStringLiteral(BILL_VERSION_STRING),
                          // Short description of what the app does.
-                         i18n("Application Description"),
+                         i18n("Simple bullet journal"),
                          // The license this code is released under.
                          KAboutLicense::GPL,
                          // Copyright Statement.
-                         i18n("(c) %{CURRENT_YEAR}"));
-    aboutData.addAuthor(i18nc("@info:credit", "%{AUTHOR}"),
-                        i18nc("@info:credit", "Author Role"),
-                        QStringLiteral("%{EMAIL}"),
-                        QStringLiteral("https://yourwebsite.com"));
+                         i18n("© 2022"));
+    aboutData.addAuthor(i18nc("@info:credit", "Link Dupont"),
+                        i18nc("@info:credit", "Author"),
+                        QStringLiteral("link@sub-pop.net"),
+                        QStringLiteral("https://sub-pop.net"));
     KAboutData::setApplicationData(aboutData);
 
     QQmlApplicationEngine engine;
@@ -51,6 +52,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     AboutType about;
     qmlRegisterSingletonInstance("org.kde.bill", 1, 0, "AboutType", &about);
+
+    qmlRegisterType<JournalModel>("org.kde.bill", 1, 0, "JournalModel");
 
     App application;
     qmlRegisterSingletonInstance("org.kde.bill", 1, 0, "App", &application);

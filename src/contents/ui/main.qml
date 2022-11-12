@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // SPDX-FileCopyrightText: %{CURRENT_YEAR} %{AUTHOR} <%{EMAIL}>
 
+import QtQml 2.15
 import QtQuick 2.15
 import QtQuick.Controls 2.15 as Controls
 import QtQuick.Layouts 1.15
@@ -10,7 +11,7 @@ import org.kde.bill 1.0
 Kirigami.ApplicationWindow {
     id: root
 
-    title: i18n("bill")
+    title: i18n("Bullet Bill")
 
     minimumWidth: Kirigami.Units.gridUnit * 20
     minimumHeight: Kirigami.Units.gridUnit * 20
@@ -37,17 +38,10 @@ Kirigami.ApplicationWindow {
     property int counter: 0
 
     globalDrawer: Kirigami.GlobalDrawer {
-        title: i18n("bill")
+        title: i18n("Bullet Bill")
         titleIcon: "applications-graphics"
         isMenu: !root.isMobile
         actions: [
-            Kirigami.Action {
-                text: i18n("Plus One")
-                icon.name: "list-add"
-                onTriggered: {
-                    counter += 1
-                }
-            },
             Kirigami.Action {
                 text: i18n("About bill")
                 icon.name: "help-about"
@@ -67,36 +61,58 @@ Kirigami.ApplicationWindow {
 
     pageStack.initialPage: page
 
-    Kirigami.Page {
+    Kirigami.ScrollablePage {
         id: page
 
         Layout.fillWidth: true
 
-        title: i18n("Main Page")
-
-        actions.main: Kirigami.Action {
-            text: i18n("Plus One")
-            icon.name: "list-add"
-            tooltip: i18n("Add one to the counter")
-            onTriggered: {
-                counter += 1
-            }
-        }
+        title: i18n("Journal")
 
         ColumnLayout {
-            width: page.width
+            id: layout
+            anchors.fill: parent
 
-            anchors.centerIn: parent
+            Kirigami.CardsListView {
+                id: listView
 
-            Kirigami.Heading {
-                Layout.alignment: Qt.AlignCenter
-                text: counter == 0 ? i18n("Hello, World!") : counter
-            }
+                model: App.journal
 
-            Controls.Button {
-                Layout.alignment: Qt.AlignHCenter
-                text: "+ 1"
-                onClicked: counter += 1
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                delegate: Kirigami.AbstractCard {
+
+                    contentItem: Item {
+                        implicitWidth: delegateLayout.implicitWidth
+                        implicitHeight: delegateLayout.implicitHeight
+
+                        ColumnLayout {
+                            id: delegateLayout
+
+                            anchors.fill: parent
+
+                            spacing: Kirigami.Units.mediumSpacing
+
+                            Kirigami.Heading {
+                                Layout.fillWidth: true
+
+                                level: 2
+                                text: Qt.formatDate(model.date)
+                            }
+
+                            Controls.TextArea {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+
+                                text: model.content
+                                wrapMode: TextEdit.WordWrap
+                                onEditingFinished: {
+                                    model.content = text
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
