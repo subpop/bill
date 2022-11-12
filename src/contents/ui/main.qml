@@ -35,6 +35,13 @@ Kirigami.ApplicationWindow {
         onTriggered: App.saveWindowGeometry(root)
     }
 
+    Timer {
+        id: autosaveTimer
+        interval: 30000
+        repeat: true
+        onTriggered: App.journal.submitAll()
+    }
+
     property int counter: 0
 
     globalDrawer: Kirigami.GlobalDrawer {
@@ -64,51 +71,40 @@ Kirigami.ApplicationWindow {
     Kirigami.ScrollablePage {
         id: page
 
-        Layout.fillWidth: true
-
         title: i18n("Journal")
 
-        ColumnLayout {
-            id: layout
-            anchors.fill: parent
+        Kirigami.CardsListView {
+            id: listView
 
-            Kirigami.CardsListView {
-                id: listView
+            model: App.journal
 
-                model: App.journal
+            delegate: Kirigami.AbstractCard {
+                contentItem: Item {
+                    implicitWidth: delegateLayout.implicitWidth
+                    implicitHeight: delegateLayout.implicitHeight
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                    ColumnLayout {
+                        id: delegateLayout
 
-                delegate: Kirigami.AbstractCard {
+                        anchors.fill: parent
 
-                    contentItem: Item {
-                        implicitWidth: delegateLayout.implicitWidth
-                        implicitHeight: delegateLayout.implicitHeight
+                        spacing: Kirigami.Units.mediumSpacing
 
-                        ColumnLayout {
-                            id: delegateLayout
+                        Kirigami.Heading {
+                            Layout.fillWidth: true
 
-                            anchors.fill: parent
+                            level: 2
+                            text: Qt.formatDate(model.date)
+                        }
 
-                            spacing: Kirigami.Units.mediumSpacing
+                        Controls.TextArea {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
 
-                            Kirigami.Heading {
-                                Layout.fillWidth: true
-
-                                level: 2
-                                text: Qt.formatDate(model.date)
-                            }
-
-                            Controls.TextArea {
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-
-                                text: model.content
-                                wrapMode: TextEdit.WordWrap
-                                onEditingFinished: {
-                                    model.content = text
-                                }
+                            text: model.content
+                            wrapMode: TextEdit.WordWrap
+                            onEditingFinished: {
+                                model.content = text
                             }
                         }
                     }
